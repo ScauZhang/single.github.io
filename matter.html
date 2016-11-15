@@ -32,27 +32,51 @@
 	    engine: engine
 	});
 
-	var rim = Matter.Bodies.circle(400, 300, 30);
-	var rim1 = Matter.Bodies.circle(200, 300, 30);
+	// var rim = Matter.Bodies.polygon(400, 300, 8,30);
+	// var rim1 = Matter.Bodies.polygon(200, 300,8,30);
 
-	Matter.Body.setDensity(rim1,0.001);
-	Matter.Body.setDensity(rim,0.001);
+	// Matter.Body.setDensity(rim1,0.1);
+	// Matter.Body.setDensity(rim,0.1);
+	// rim.restitution = 1;
+	// rim1.restitution = 1;
 
+	// World.add(engine.world, [
+	// 	rim,
+	// 	rim1,
+	// 	Constraint.create({ pointA: { x: 400, y: 230}, bodyB: rim,pointB: { x: 0, y: -30 }, stiffness:1}),
+	// 	Constraint.create({ pointA: { x: 330, y: 300 }, bodyB: rim,pointB: { x: -30, y: 0 }, stiffness:1 }),
+	// 	Constraint.create({ pointA: { x: 470, y: 300 }, bodyB: rim,pointB: { x: 30, y: 0 }, stiffness:1 }),
+	// 	Constraint.create({ pointA: { x: 200, y: 230}, bodyB: rim1,pointB: { x: 0, y: -30 }, stiffness:1}),
+	// 	Constraint.create({ pointA: { x: 130, y: 300 }, bodyB: rim1,pointB: { x: -30, y: 0 }, stiffness:1}),
+	// 	Constraint.create({ pointA: { x: 270, y: 300 }, bodyB: rim1,pointB: { x: 30, y: 0 }, stiffness:1 })
+	// 	// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: 30 },pointB: { x: 0, y: -30 }, stiffness:1 }),
+	// 	// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: -30 },pointB: { x: 0, y: 30 }, stiffness:1 }),
+	// 	// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: 30 },pointB: { x: 0, y: 30 }, stiffness:1 }),
+	// 	// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: -30 },pointB: { x: 0, y: -30 }, stiffness:1 }),
+	// 	// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 30, y: 0 },pointB: { x: -30, y: 0 }, stiffness:1 })
+	// 	]);
+
+	var radius = 15;
+	var rim = Matter.Bodies.polygon(300, 300,20, radius);
+	var rim1 = Matter.Bodies.polygon(500, 300,20,radius);
+	// var rim = Matter.Bodies.rectangle(300, 300, 30,30,{ isStatic: true });
+	// var rim1 = Matter.Bodies.rectangle(wwidth-230, 300, 30,30,{ isStatic: true });
+	Matter.Body.setDensity(rim1,0.1);
+	Matter.Body.setDensity(rim,0.1);
+	rim.restitution = 1;
+	rim1.restitution = 1;
+	
 	World.add(engine.world, [
 		rim,
 		rim1,
-		Constraint.create({ pointA: { x: 400, y: 80}, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:1}),
-		Constraint.create({ pointA: { x: 200, y: 300 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
-		Constraint.create({ pointA: { x: 600, y: 300 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
-		Constraint.create({ pointA: { x: 200, y: 80}, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:1}),
-		Constraint.create({ pointA: { x: 0, y: 300 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:1}),
-		Constraint.create({ pointA: { x: 400, y: 300 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:1 })
-		// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: 30 },pointB: { x: 0, y: -30 }, stiffness:1 }),
-		// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: -30 },pointB: { x: 0, y: 30 }, stiffness:1 }),
-		// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: 30 },pointB: { x: 0, y: 30 }, stiffness:1 }),
-		// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 0, y: -30 },pointB: { x: 0, y: -30 }, stiffness:1 }),
-		// Constraint.create({ bodyB: rim1,bodyA:rim,pointA: { x: 30, y: 0 },pointB: { x: -30, y: 0 }, stiffness:1 })
-		]);
+		Constraint.create({ pointA: { x: 300, y: 300-radius-50}, bodyB: rim,pointB: { x: 0, y: -radius }, stiffness:1}),
+		Constraint.create({ pointA: { x: 300-radius-50, y: 300 }, bodyB: rim,pointB: { x: -radius, y: 0 }, stiffness:1 }),
+		Constraint.create({ pointA: { x: 300+radius+50, y: 300 }, bodyB: rim,pointB: { x: radius, y: 0 }, stiffness:1 }),
+
+		Constraint.create({ pointA: { x: 500, y: 300-radius-50}, bodyB: rim1,pointB: { x: 0, y: -radius }, stiffness:1}),
+		Constraint.create({ pointA: { x: 500-radius-50, y: 300 }, bodyB: rim1,pointB: { x: -radius, y: 0 }, stiffness:1}),
+		Constraint.create({ pointA: { x: 500+radius+50, y: 300 }, bodyB: rim1,pointB: { x: radius, y: 0 }, stiffness:1 })
+	]);
 
     // var world = engine.world,
     //     group = Body.nextGroup(true);
@@ -76,7 +100,8 @@
     //     stack
     // ]);
 	// create two boxes and a ground
-	var boxA = Bodies.circle(200, 50, 50);
+	var boxA = Bodies.circle(300, -450, 50);
+	Matter.Body.setDensity(boxA,0.0001);
 	// Matter.Body.setVelocity(boxA,Matter.Vector.create(10, -10));
 	// boxA.angle=15;
 	var boxB = Bodies.rectangle(400, 50, 80, 80);

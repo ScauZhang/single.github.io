@@ -12,6 +12,7 @@ var PIXI_BALL = function(x,y,world){
 	this.sprite.y = y;
 	this.box = Matter.Bodies.circle(x, y, 40);
 	this.box.restitution = 1;
+	Matter.Body.setDensity(this.box,0.0001);
 	this.maxSpeedX = 22.0;
 	this.minSpeedX = 2.0;
 	this.maxSpeedY = 60.0; //最大速度Y
@@ -31,7 +32,7 @@ PIXI_BALL.prototype = {
 		var that = this;
 		that.handle = requestAnimationFrame(function(){that.animate && that.animate()});
 		if(that.box.position.y < wheight - 81){
-			that.sprite.rotation -= 0.1;
+			that.sprite.rotation += (that.sprite.x - that.box.position.x)/50;
 		}else{
 			that.sprite.rotation -= (that.sprite.x - that.box.position.x)/50;
 		}

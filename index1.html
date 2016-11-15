@@ -15,6 +15,7 @@
 <script type="text/javascript" src="js/pixi.min.js"></script>
 <script type="text/javascript" src="js/matter.js"></script>
 <script type="text/javascript" src="js/ball.js"></script>
+<script type="text/javascript" src="js/bank.js"></script>
 <script>
 	var bunny,renderer,stage;
 	// var G = 0.98;//重力加速度;
@@ -70,42 +71,12 @@
 
 		stage.addChild(backgroundSprite);
 
-
 		var ground = Bodies.rectangle(wwidth/2, wheight, wwidth, 60, { isStatic: true });
+		var ground1 = Bodies.rectangle(wwidth, wheight/2, 60, wheight, { isStatic: true });
 		Matter.Body.setDensity(ground,1);
 		World.add(engine.world, [ground]);
 
-
-		var radius = 15;
-		var graphics = new PIXI.Graphics();
-		graphics.beginFill(0xFF3300);
-		graphics.drawCircle(wwidth-100, 800, radius);
-		graphics.drawCircle(wwidth-230, 800, radius);
-		graphics.endFill();
-
-		stage.addChild(graphics);
-		// stage.addChild(circle2);
-
-		var rim = Matter.Bodies.circle(wwidth-100, 800, radius);
-		var rim1 = Matter.Bodies.circle(wwidth-230, 800, radius);
-		// var rim = Matter.Bodies.rectangle(wwidth-100, 800, 30,30,{ isStatic: true });
-		// var rim1 = Matter.Bodies.rectangle(wwidth-230, 800, 30,30,{ isStatic: true });
-		Matter.Body.setDensity(rim1,0.7);
-		Matter.Body.setDensity(rim,0.7);
-		// rim.restitution = 1;
-		// rim1.restitution = 1;
-		
-		World.add(engine.world, [
-			rim,
-			rim1,
-			Constraint.create({ pointA: { x: wwidth-100, y: 800-200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:1}),
-			Constraint.create({ pointA: { x: 800, y: wwidth-100-200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
-			Constraint.create({ pointA: { x: 800, y: wwidth-100+200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
-			Constraint.create({ pointA: { x: wwidth-230, y: 800-200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:1}),
-			Constraint.create({ pointA: { x: 800, y: wwidth-230-200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
-			Constraint.create({ pointA: { x: 800, y: wwidth-230+200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:0.1 })
-		]);
-
+		var bank = new PIXI_BANK(400,500,engine.world,stage);
 
 		Runner.start(runner,engine);
 
