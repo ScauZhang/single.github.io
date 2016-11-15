@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{margin:0;padding:0;}
+	</style>
+</head>
+<body>
+	
+</body>
+</html>
+<script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="js/pixi.min.js"></script>
+<script type="text/javascript" src="js/matter.js"></script>
+<script type="text/javascript" src="js/ball.js"></script>
+<script>
+	var bunny,renderer,stage;
+	// var G = 0.98;//重力加速度;
+
+	// matter模块
+	var Engine = Matter.Engine,
+	    Render = Matter.RenderPixi,
+	    World = Matter.World,
+	    Constraint = Matter.Constraint,
+	    Runner = Matter.Runner,
+	    Bodies = Matter.Bodies;
+
+
+	// create an engine
+	var engine = Engine.create();
+	engine.world.gravity.scale = 0.002;
+	engine.enableSleeping = true;
+	// create an runner
+	var runner = Runner.create();
+	// create a renderer
+	// var render = Render.create({
+	//     element: document.body,
+	//     engine: engine,
+	//     height:wheight,
+	//     width:wwidth
+	// });
+
+
+	var wwidth = $(window).width();
+	var wheight = $(window).height();
+
+	init();
+	animate();
+	function init(){
+		// 创建pixi的stage
+		stage = new PIXI.Container();
+
+		var backgroundSprite = new PIXI.Sprite();
+		backgroundSprite.width = wwidth;
+		backgroundSprite.height = wheight;
+
+
+		// 创建一个渲染
+		renderer = PIXI.autoDetectRenderer(wwidth,wheight);
+		// 添加到页面
+		document.body.appendChild(renderer.view);
+
+		backgroundSprite.interactive = true;
+		// backgroundSprite.on('mousedown', onDown);
+		// backgroundSprite.on('touchstart', onDown);
+		backgroundSprite.on('mouseup',ballStart);
+		backgroundSprite.on('touchend',ballStart);
+
+		stage.addChild(backgroundSprite);
+
+
+		var ground = Bodies.rectangle(wwidth/2, wheight, wwidth, 60, { isStatic: true });
+		Matter.Body.setDensity(ground,1);
+		World.add(engine.world, [ground]);
+
+
+		var radius = 15;
+		var graphics = new PIXI.Graphics();
+		graphics.beginFill(0xFF3300);
+		graphics.drawCircle(wwidth-100, 800, radius);
+		graphics.drawCircle(wwidth-230, 800, radius);
+		graphics.endFill();
+
+		stage.addChild(graphics);
+		// stage.addChild(circle2);
+
+		var rim = Matter.Bodies.circle(wwidth-100, 800, radius);
+		var rim1 = Matter.Bodies.circle(wwidth-230, 800, radius);
+		// var rim = Matter.Bodies.rectangle(wwidth-100, 800, 30,30,{ isStatic: true });
+		// var rim1 = Matter.Bodies.rectangle(wwidth-230, 800, 30,30,{ isStatic: true });
+		Matter.Body.setDensity(rim1,0.7);
+		Matter.Body.setDensity(rim,0.7);
+		// rim.restitution = 1;
+		// rim1.restitution = 1;
+		
+		World.add(engine.world, [
+			rim,
+			rim1,
+			Constraint.create({ pointA: { x: wwidth-100, y: 800-200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:1}),
+			Constraint.create({ pointA: { x: 800, y: wwidth-100-200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
+			Constraint.create({ pointA: { x: 800, y: wwidth-100+200 }, bodyB: rim,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
+			Constraint.create({ pointA: { x: wwidth-230, y: 800-200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:1}),
+			Constraint.create({ pointA: { x: 800, y: wwidth-230-200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:0.1 }),
+			Constraint.create({ pointA: { x: 800, y: wwidth-230+200 }, bodyB: rim1,pointB: { x: 0, y: 0 }, stiffness:0.1 })
+		]);
+
+
+		Runner.start(runner,engine);
+
+		// Matter.Events.on(runner,'beforeUpdate',function(){
+		// 	console.log(rim.position.x);
+		// });
+		
+	}
+
+	function ballStart(eventData){
+
+		// Runner.stop(runner,engine);
+		var x = eventData.data.global.x;
+		var y = eventData.data.global.y;
+
+		var ball = new PIXI_BALL( 100 ,wheight - 200,engine.world);
+		ball.setBallVelocity(x,wheight - y,wwidth,wheight);
+		stage.addChild(ball.sprite);
+
+
+		// add all of the bodies to the world
+		// Runner.start(runner,engine);
+
+		// Matter.Events.on(runner,'beforeUpdate',function(){
+		// 	ball.animate && ball.animate();
+		// 	renderer.render(stage);
+		// });
+	}
+
+	// Render.run(render);
+
+	function animate() {
+		requestAnimationFrame( animate );
+		renderer.render(stage);
+	}
+
+
+
+
+</script>
