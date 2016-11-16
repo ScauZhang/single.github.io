@@ -11,7 +11,7 @@ var PIXI_BALL = function(x,y,world){
 	this.sprite.x = x;
 	this.sprite.y = y;
 	this.box = Matter.Bodies.circle(x, y, 40);
-	this.box.restitution = 1;
+	this.box.restitution = 0.5;
 	Matter.Body.setDensity(this.box,0.0001);
 	this.maxSpeedX = 22.0;
 	this.minSpeedX = 2.0;
@@ -44,6 +44,8 @@ PIXI_BALL.prototype = {
 		this.sprite.destroy();
 		this.handle = null;
 		Matter.Composite.remove(this.world, this.box);
+		delete this.box;
+		delete this.sprite;
 		delete this.world;
 		delete this.box;
 		delete this.maxSpeedX;
