@@ -51,7 +51,7 @@
 
 	var img = new Image();
 	img.src = 'images/ball.png';
-	img.load = function(){
+	img.onload = function(){
 		init();
 		animate();
 	}
@@ -59,8 +59,6 @@
 		// 创建pixi的stage
 		stage = new PIXI.Container();
 		stage.displayList = new PIXI.DisplayList();
-
-
 
 		var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png");
 		backgroundSprite.anchor.x = .5;
