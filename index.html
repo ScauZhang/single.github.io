@@ -52,9 +52,24 @@
 		stage = new PIXI.Container();
 		stage.displayList = new PIXI.DisplayList();
 
-		var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png");
-		backgroundSprite.width = wwidth;
-		backgroundSprite.height = wheight;
+		var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png",true);
+		backgroundSprite.anchor.x = .5;
+		backgroundSprite.anchor.y = .5;
+		backgroundSprite.position.x = wwidth/2;
+		backgroundSprite.position.y = wheight/2;
+		backgroundSprite.texture.baseTexture.on('loaded',function(images){
+			var imgWidht = images.width;
+			var imgHeight = images.height;
+			if(imgWidht / imgHeight > wwidth / wheight){
+				backgroundSprite.width = imgWidht * wheight / imgHeight;
+				backgroundSprite.height = wheight;
+			}else{
+				backgroundSprite.width = wwidth;
+				backgroundSprite.height = imgHeight * wwidth / imgWidht;
+			}
+		});
+
+		
 
 
 		// 创建一个渲染
