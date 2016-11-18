@@ -1,9 +1,10 @@
 //require PIXI Matter
 
-var PIXI_BALL = function(x,y,world){
+var PIXI_BALL = function(x,y,engine,stage){
 	x = x || 0,y = y || 0;
-	this.world = world;
+	this.world = engine.world;
 	this.sprite = PIXI.Sprite.fromImage("images/ball.png");
+	this.sprite.displayGroup = layer;
 	this.sprite.anchor.x = .5;
 	this.sprite.anchor.y = .5;
 	this.sprite.width = 80;
@@ -11,6 +12,7 @@ var PIXI_BALL = function(x,y,world){
 	this.sprite.x = x;
 	this.sprite.y = y;
 	this.box = Matter.Bodies.circle(x, y, 40);
+	this.box.label = 'basketball';
 	this.box.restitution = 0.5;
 	Matter.Body.setDensity(this.box,0.0001);
 	this.maxSpeedX = 22.0;
@@ -24,6 +26,8 @@ var PIXI_BALL = function(x,y,world){
 	setTimeout(function(){
 		that.destroy();
 	},10000);
+
+	stage.addChild(this.sprite);
 }
 
 
@@ -42,6 +46,7 @@ PIXI_BALL.prototype = {
 	destroy:function(){
 		this.animate = null;
 		this.sprite.destroy();
+		if(this.handle) cancelAnimationFrame(this.handle);
 		this.handle = null;
 		Matter.Composite.remove(this.world, this.box);
 		delete this.box;
