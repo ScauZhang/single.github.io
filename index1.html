@@ -46,17 +46,23 @@
 
 
 	$(window).resize(function(){
-		init();
+		// init();
 	});
 
-	init();
-	animate();
+	var img = new Image();
+	img.src = 'images/ball.png';
+	img.load = function(){
+		init();
+		animate();
+	}
 	function init(){
 		// 创建pixi的stage
 		stage = new PIXI.Container();
 		stage.displayList = new PIXI.DisplayList();
 
-		var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png",true);
+
+
+		var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png");
 		backgroundSprite.anchor.x = .5;
 		backgroundSprite.anchor.y = .5;
 		backgroundSprite.position.x = wwidth/2;
@@ -72,9 +78,6 @@
 				backgroundSprite.height = imgHeight * wwidth / imgWidht;
 			}
 		});
-
-		
-
 
 		// 创建一个渲染
 		renderer = PIXI.autoDetectRenderer(wwidth,wheight);
