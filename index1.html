@@ -56,7 +56,7 @@
 			img.src = imgList[i];
 			img.onload = function(){
 				loadIndex ++;
-				console.log(loadIndex/imgList.length);
+				alert(loadIndex/imgList.length);
 				if(loadIndex/imgList.length >= 1){
 					console.log('loaded!');
 					init();
