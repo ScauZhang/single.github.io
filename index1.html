@@ -49,19 +49,19 @@
 		window.wwidth = $(window).width();
 		window.wheight = $(window).height();
 
-		var imgList = ['images/ball.png',"images/bg_ys.png","images/2.png",'images/1.png','images/bank.png']
-		var loadIndex = 0;
-		for(var i in imgList){
-			var img = new Image();
-			img.src = imgList[i];
-			img.onload = function(){
-				loadIndex ++;
-				// alert(loadIndex/imgList.length);
-				if(loadIndex/imgList.length >= 1){
+		// var imgList = ['images/ball.png',"images/bg_ys.png","images/2.png",'images/1.png','images/bank.png']
+		// var loadIndex = 0;
+		// for(var i in imgList){
+		// 	var img = new Image();
+		// 	img.src = imgList[i];
+		// 	img.onload = function(){
+		// 		loadIndex ++;
+		// 		// alert(loadIndex/imgList.length);
+		// 		if(loadIndex/imgList.length >= 1){
 					
-				}
-			};
-		}
+		// 		}
+		// 	};
+		// }
 
 		init();
 		animate();
