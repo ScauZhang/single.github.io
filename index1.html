@@ -56,11 +56,11 @@
 			img.src = imgList[i];
 			img.onload = function(){
 				loadIndex ++;
-				alert(loadIndex/imgList.length);
+				// alert(loadIndex/imgList.length);
 				if(loadIndex/imgList.length >= 1){
-					// console.log('loaded!');
 					init();
 					animate();
+					alert('loaded!');
 				}
 			};
 		}
