@@ -1,4 +1,8 @@
 var PIXI_BANK = function(x,y,engine,stage){
+
+	var Constraint = Matter.Constraint,
+		World = Matter.World;
+
 	x = x || 0,y = y || 0;
 	this.x = x,this.y = y;
 	this.world = engine.world;
@@ -27,7 +31,7 @@ var PIXI_BANK = function(x,y,engine,stage){
 
 	var group = Matter.Body.nextGroup(true);
 	var ropeA = Matter.Composites.stack(rimx+27, rimy, 3, 1, 10, 10, function(x, y) {
-        return Bodies.rectangle(x, y, 25, 10, { collisionFilter: { group: group } });
+        return Matter.Bodies.rectangle(x, y, 25, 10, { collisionFilter: { group: group } });
     });
     this.ropeA = ropeA;
     
@@ -42,7 +46,7 @@ var PIXI_BANK = function(x,y,engine,stage){
 
     var group = Matter.Body.nextGroup(true);
 	var ropeB = Matter.Composites.stack(rim1x-27, rimy, 3, 1, 10, 10, function(x, y) {
-        return Bodies.rectangle(x, y, 25, 10, { collisionFilter: { group: group } });
+        return Matter.Bodies.rectangle(x, y, 25, 10, { collisionFilter: { group: group } });
     });
     this.ropeB = ropeB;
 
@@ -56,8 +60,8 @@ var PIXI_BANK = function(x,y,engine,stage){
         stiffness: 0.5
     }));
 
-    this.line1 = Constraint.create({ pointA: { x: 0, y: 0 },bodyA: ropeA.bodies[2],bodyB: ropeB.bodies[2],pointB: { x: 0, y: 0 }, stiffness:1 });
-    World.add(this.world,[
+    this.line1 = Matter.Constraint.create({ pointA: { x: 0, y: 0 },bodyA: ropeA.bodies[2],bodyB: ropeB.bodies[2],pointB: { x: 0, y: 0 }, stiffness:1 });
+    Matter.World.add(this.world,[
     	ropeA,
     	ropeB,
     	this.line1
@@ -75,13 +79,13 @@ var PIXI_BANK = function(x,y,engine,stage){
 	bank.height = 40;
 	bank.anchor.x = .5;
 	bank.anchor.y = .5;
-	bank.displayGroup = layer1;
+	bank.displayGroup = PIXI.layer1;
 	this.bank = bank;
     stage.addChild(bank);
 
 
     // 验证是否入球
-	var collider = Bodies.rectangle(x, y + 60, 80, 10, {
+	var collider = Matter.Bodies.rectangle(x, y + 60, 80, 10, {
         isSensor: true,
         isStatic: true,
         render: {
@@ -92,7 +96,7 @@ var PIXI_BANK = function(x,y,engine,stage){
 
     this.collider = collider;
 
-    World.add(this.world, collider);
+    Matter.World.add(this.world, collider);
 
     var tempY,isNeed;
     Matter.Events.on(this.engine, 'collisionStart', function(event) {
@@ -130,7 +134,7 @@ var PIXI_BANK = function(x,y,engine,stage){
     for(var a in ropeA.bodies){
     	var one = ropeA.bodies[a];
     	var b = PIXI.Sprite.fromImage("images/1.png");
-    	b.displayGroup = layer1;
+    	b.displayGroup = PIXI.layer1;
     	b.x = one.position.x;
     	b.y = one.position.y;
     	b.width = 25;
@@ -139,7 +143,7 @@ var PIXI_BANK = function(x,y,engine,stage){
 		b.anchor.y = .5;
 
 		var b1 = PIXI.Sprite.fromImage("images/1.png");
-    	b1.displayGroup = layer1;
+    	b1.displayGroup = PIXI.layer1;
     	b1.x = one.position.x + 30;
     	b1.y = one.position.y;
     	b1.width = 25;
@@ -155,14 +159,14 @@ var PIXI_BANK = function(x,y,engine,stage){
     for(var a in ropeB.bodies){
     	var one = ropeB.bodies[a];
     	var b = PIXI.Sprite.fromImage("images/1.png");
-    	b.displayGroup = layer1;
+    	b.displayGroup = PIXI.layer1;
     	b.x = one.position.x;
     	b.y = one.position.y;
     	b.anchor.x = .5;
 		b.anchor.y = .5;
 
 		var b1 = PIXI.Sprite.fromImage("images/1.png");
-    	b1.displayGroup = layer1;
+    	b1.displayGroup = PIXI.layer1;
     	b1.x = one.position.x - 30;
     	b1.y = one.position.y;
     	b1.width = 25;

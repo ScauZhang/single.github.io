@@ -1,10 +1,13 @@
 //require PIXI Matter
 
 var PIXI_BALL = function(x,y,engine,stage){
+
+	var World = Matter.World;
+
 	x = x || 0,y = y || 0;
 	this.world = engine.world;
 	this.sprite = PIXI.Sprite.fromImage("images/ball.png");
-	this.sprite.displayGroup = layer;
+	this.sprite.displayGroup = PIXI.layer;
 	this.sprite.anchor.x = .5;
 	this.sprite.anchor.y = .5;
 	this.sprite.width = 80;
