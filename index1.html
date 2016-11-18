@@ -58,7 +58,7 @@
 				loadIndex ++;
 				// alert(loadIndex/imgList.length);
 				if(loadIndex/imgList.length >= 1){
-					alert(loadIndex/imgList.length);
+					
 					init();
 					animate();
 				}
@@ -67,6 +67,7 @@
 
 
 		function init(){
+			alert('1');
 			// 创建pixi的stage
 			stage = new PIXI.Container();
 			stage.displayList = new PIXI.DisplayList();
