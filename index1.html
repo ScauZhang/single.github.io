@@ -15,9 +15,11 @@
 	<div id="menu">
 		<p class="FGA">总投篮数：<span id="FGAText">0</span></p>
 		<p class="FGM">命中数：<span id="FGMText">0</span></p>
+		<p class="parserText"><span id="parserText">你是未来的库里！<br>你是未来的库里！</span></p>
 		<a href="javascript:void(0)" id="start">开始游戏</a>
 		<a href="javascript:void(0)" id="share">分享</a>
 	</div>
+	<div id="restart"></div>
 	<div id="mask">
 		<div class="spinner">
 	  <div class="spinner-container container1">
@@ -56,6 +58,7 @@
 		var bunny,renderer,stage;
 		var bank;
 		var ball;
+		var isEnterGame = false;
 		var isStart = false;
 		var backgroundSprite; //背景
 		var fieldGoalsAttempted = 0,freeGoalMade = 0;
@@ -85,7 +88,7 @@
 		window.wwidth = $(window).width();
 		window.wheight = $(window).height();
 
-		var imgList = ['images/ball.png',"images/bg_ys.jpg","images/bg_hj.jpg","images/bg_ld.jpg","images/bg_mc.jpg","images/2.png",'images/1.png','images/bank1.png']
+		var imgList = ['images/ball.png',"images/bg_ys.jpg","images/bg_hj.jpg","images/bg_ld.jpg","images/bg_mc.jpg","images/2.png",'images/1.png','images/bank1.png','images/restart.png']
 		var loadIndex = 0;
 		for(var i in imgList){
 			var img = new Image();
@@ -131,19 +134,41 @@
 			}
 			basicText.text = freeGoalMade + '/' + fieldGoalsAttempted;
 		}
-		function showTime(){
-			var timeText = new PIXI.Text('60s',{fontFamily:'Arial',fontSize:'50px',fill:'#fff'});
-			timeText.x = wwidth - 10;
-			timeText.displayGroup = PIXI.layer;
-			timeText.y = 10;
-			timeText.anchor.x = 1;
-			stage.addChild(timeText);
-			var i = 0;
-			timeText.handle = setInterval(function(){
-				i++;
-				timeText.text = 60 - i + 's';
-			},1000);
+		var timeText;
+		function showTime(timeoutCallvback){
+			if(!timeText){
+				timeText = new PIXI.Text('60s',{fontFamily:'Arial',fontSize:'50px',fill:'#fff'});
+				timeText.x = wwidth - 10;
+				timeText.displayGroup = PIXI.layer;
+				timeText.y = 10;
+				timeText.anchor.x = 1;
+				stage.addChild(timeText);
+				var i = 0;
+				timeText.handle = setInterval(function(){
+					i++;
+					timeText.text = 60 - i + 's';
+					if(60 - i <= 0){
+						timeoutCallvback && timeoutCallvback();
+					}
+				},1000);
+			}
+		}
 
+		function restartTime(){
+			if(timeText && timeText.handle){clearInterval(timeText.handle);}
+			timeText = null;
+			showTime(gameEnd);
+		}
+
+		function gameEnd(){
+			isEnterGame = false;
+			isStart = false;
+			if(timeText && timeText.handle){clearInterval(timeText.handle);}
+			timeText && timeText.destroy();
+			$('#FGAText').html(fieldGoalsAttempted);
+			$('#FGMText').html(freeGoalMade);
+			$('#menu').fadeIn(200);
+			$('#restart').fadeOut(200);
 		}
 
 
@@ -183,6 +208,20 @@
 			backgroundSprite.interactive = true;
 			// backgroundSprite.on('mousedown', onDown);
 			// backgroundSprite.on('touchstart', onDown);
+
+			$('#start').on('touchend',function(){
+				start();
+			});
+
+			$('#restart').on('touchend',function(event){
+				event.stopPropagation();
+				gameEnd();
+			});
+
+			$('#share').on('touchend',function(){
+				console.log('1');
+			});
+
 			backgroundSprite.on('mouseup',ballStart);
 			backgroundSprite.on('touchend',ballStart);
 
@@ -191,6 +230,13 @@
 
 		init();
 		animate();
+
+		function start(){
+			$('#menu').fadeOut(200,function(){isEnterGame = true;});
+			$('#restart').fadeIn(200);
+			fieldGoalsAttempted = 0,freeGoalMade = 0;
+			showData();
+		}
 
 		//重新创建篮板
 		function madeBank(){
@@ -253,8 +299,9 @@
 		}
 		function ballStart(eventData){
 
+			if(!isEnterGame) return;
 			if(!isStart){
-				showTime();
+				restartTime();
 			}
 			isStart = true;
 

@@ -2,9 +2,14 @@
 #mask{position: fixed;z-index: 100;top: 0;right: 0;left: 0;bottom: 0;background: #b18f08;text-align: center;color: #fff;}
 #text{font-size: 6rem;position: absolute;height: 20rem;width: 100%;left: 0;top: 50%;margin: -10rem 0 0 0;line-height: 20rem;}
 
-#menu{position: fixed;z-index: 100;top: 0;right: 0;left: 0;bottom: 0;background: rgba(0,0,0,0.6);text-align: center;color: #fff;}
-#menu .FGA{margin-top: 10rem;font-size: 6rem;height: 10rem;line-height: 10rem;}
-#menu .FGM{margin-top: 2rem;font-size: 6rem;height: 10rem;line-height: 10rem;}
+#menu{position: fixed;z-index: 100;top: 0;right: 0;left: 0;bottom: 0;background: rgba(0,0,0,0.8);text-align: center;color: #fff;}
+#menu .FGA{margin-top: 40rem;font-size: 6rem;height: 7rem;line-height: 7rem;}
+#menu .parserText{margin-top: 2rem;font-size: 3rem;line-height: 3rem;}
+#menu .FGM{margin-top: 2rem;font-size: 6rem;height: 7rem;line-height: 7rem;}
+
+#restart{display: none;width: 5rem;height: 5rem;background: url(../images/restart.png) center center no-repeat;background-size: 100% 100%;position: fixed;bottom: 3rem;right: 3rem;z-index: 100;}
+
+#menu a{ margin: 2rem auto 0 auto;font-size: 4rem;text-decoration: none; display: block;width: 50rem;line-height: 7rem;text-align: center;border:0.3rem solid #fff;color: #fff;}
 
 
 .spinner {
