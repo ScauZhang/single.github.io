@@ -3,9 +3,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<meta content="width=device-width,initial-scale=0.35,maximum-scale=0.35,user-scalable=no" id="viewport" name="viewport">
 	<link rel="stylesheet" href="css/index.css">
 </head>
 <body>
+	<audio controls="controls" autoplay="true" loop style="display:none;">  
+	   <source src="images/sound1.ogg" /> 
+	   <source src="images/sound1.mp3" /> 
+	   <source src="images/sound1.wav" /> 
+	</audio> 
+	<div id="menu">
+		<p class="FGA">总投篮数：<span id="FGAText">0</span></p>
+		<p class="FGM">命中数：<span id="FGMText">0</span></p>
+		<a href="javascript:void(0)" id="start">开始游戏</a>
+		<a href="javascript:void(0)" id="share">分享</a>
+	</div>
 	<div id="mask">
 		<div class="spinner">
 	  <div class="spinner-container container1">
