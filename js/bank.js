@@ -1,4 +1,4 @@
-var PIXI_BANK = function(x,y,engine,stage){
+var PIXI_BANK = function(x,y,engine,stage,FGMcb){
 
 	var Constraint = Matter.Constraint,
 		World = Matter.World;
@@ -7,7 +7,8 @@ var PIXI_BANK = function(x,y,engine,stage){
 	this.x = x,this.y = y;
 	this.world = engine.world;
 	this.engine = engine;
-	this.sprite = PIXI.Sprite.fromImage("images/bank.png");
+	this.sprite = PIXI.Sprite.fromImage("images/bank1.png");
+	this.sprite.displayGroup = PIXI.layer;
 	this.sprite.anchor.x = .5;
 	this.sprite.anchor.y = .5;
 	this.sprite.width = 140*2.5;
@@ -27,6 +28,40 @@ var PIXI_BANK = function(x,y,engine,stage){
 	Matter.Body.setDensity(this.rim,0.1);
 	this.rim.restitution = 0.6;
 	this.rim1.restitution = 0.6;
+
+
+
+	var tempY,isNeed;
+    Matter.Events.on(this.engine, 'collisionStart', function(event) {
+        var pairs = event.pairs;
+        for (var i = 0, j = pairs.length; i != j; ++i) {
+            var pair = pairs[i];
+            if (pair.bodyA.label === 'collider' && pair.bodyB.label === 'basketball') {
+            	isNeed = y + 60 > pair.bodyB.position.y;
+            	tempY = pair.bodyB.position.y;
+            } else if (pair.bodyB.label === 'collider' && pair.bodyA.label === 'basketball') {
+            	isNeed = y + 60 > pair.bodyA.position.y;
+            	tempY = pair.bodyA.position.y;
+            }
+        }
+    });
+
+    Matter.Events.on(this.engine, 'collisionEnd', function(event) {
+        var pairs = event.pairs;
+        
+        for (var i = 0, j = pairs.length; i != j; ++i) {
+            var pair = pairs[i];
+            if (pair.bodyA.label === 'collider' && pair.bodyB.label === 'basketball') {
+            	if(isNeed && pair.bodyB.position.y > tempY){
+	            	FGMcb && FGMcb();
+            	}
+            } else if (pair.bodyB.label === 'collider' && pair.bodyA.label === 'basketball') {
+            	if(isNeed && pair.bodyA.position.y > tempY){
+	            	FGMcb && FGMcb();
+            	}
+            }
+        }
+    });
 
 
 	var group = Matter.Body.nextGroup(true);
@@ -88,6 +123,7 @@ var PIXI_BANK = function(x,y,engine,stage){
 	var collider = Matter.Bodies.rectangle(x, y + 60, 80, 10, {
         isSensor: true,
         isStatic: true,
+        label:'collider',
         render: {
             strokeStyle: '#FFF',
             fillStyle: 'transparent'
@@ -97,38 +133,6 @@ var PIXI_BANK = function(x,y,engine,stage){
     this.collider = collider;
 
     Matter.World.add(this.world, collider);
-
-    var tempY,isNeed;
-    Matter.Events.on(this.engine, 'collisionStart', function(event) {
-        var pairs = event.pairs;
-        for (var i = 0, j = pairs.length; i != j; ++i) {
-            var pair = pairs[i];
-            if (pair.bodyA === collider && pair.bodyB.label === 'basketball') {
-            	isNeed = y + 60 > pair.bodyB.position.y;
-            	tempY = pair.bodyB.position.y;
-            } else if (pair.bodyB === collider && pair.bodyA.label === 'basketball') {
-            	isNeed = y + 60 > pair.bodyA.position.y;
-            	tempY = pair.bodyA.position.y;
-            }
-        }
-    });
-
-    Matter.Events.on(this.engine, 'collisionEnd', function(event) {
-        var pairs = event.pairs;
-        
-        for (var i = 0, j = pairs.length; i != j; ++i) {
-            var pair = pairs[i];
-            if (pair.bodyA === collider && pair.bodyB.label === 'basketball') {
-            	if(isNeed && pair.bodyB.position.y > tempY){
-	            	console.log(tempY+'1'+pair.bodyB.position.y)
-            	}
-            } else if (pair.bodyB === collider && pair.bodyA.label === 'basketball') {
-            	if(isNeed && pair.bodyA.position.y > tempY){
-	            	console.log(tempY)
-            	}
-            }
-        }
-    });
 
     //篮网
     for(var a in ropeA.bodies){
@@ -229,7 +233,7 @@ PIXI_BANK.prototype ={
 		this.handle = null;
 		Matter.Events.off(this.engine,'collisionStart');
 		Matter.Events.off(this.engine,'collisionEnd');
-
+		
 
 		this.bank.destroy();
 		delete this.bank;

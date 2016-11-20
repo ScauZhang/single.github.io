@@ -5,6 +5,7 @@ var PIXI_BALL = function(x,y,engine,stage){
 	var World = Matter.World;
 
 	x = x || 0,y = y || 0;
+	this.engine = engine;
 	this.world = engine.world;
 	this.sprite = PIXI.Sprite.fromImage("images/ball.png");
 	this.sprite.displayGroup = PIXI.layer;
@@ -31,6 +32,7 @@ var PIXI_BALL = function(x,y,engine,stage){
 	},10000);
 
 	stage.addChild(this.sprite);
+
 }
 
 
@@ -60,6 +62,7 @@ PIXI_BALL.prototype = {
 		delete this.maxSpeedY;
 		delete this.minSpeedX;
 		delete this.minSpeedY;
+
 	},
 	// 比例wx,wy
 	setBallVelocity:function(x,y,wx,wy){

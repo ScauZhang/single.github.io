@@ -39,12 +39,14 @@
 <script type="text/javascript" src="js/ball.js?1"></script>
 <script type="text/javascript" src="js/bank.js?1"></script>
 <script>
-	// $(window).resize(function(){
-	// 	Main();
-	// });
 	Main();
 	function Main(){
 		var bunny,renderer,stage;
+		var bank;
+		var ball;
+		var isStart = false;
+		var backgroundSprite; //背景
+		var fieldGoalsAttempted = 0,freeGoalMade = 0;
 		// var G = 0.98;//重力加速度;
 
 		// matter模块
@@ -64,13 +66,14 @@
 		var runner = Runner.create();
 		// create a renderer
 
+		PIXI.layer0 = new PIXI.DisplayGroup(-1, false);
 		PIXI.layer = new PIXI.DisplayGroup(0, false);
 		PIXI.layer1 = new PIXI.DisplayGroup(2, false);
 
 		window.wwidth = $(window).width();
 		window.wheight = $(window).height();
 
-		var imgList = ['images/ball.png',"images/bg_ys.png","images/2.png",'images/1.png','images/bank.png']
+		var imgList = ['images/ball.png',"images/bg_ys.jpg","images/bg_hj.jpg","images/bg_ld.jpg","images/bg_mc.jpg","images/2.png",'images/1.png','images/bank1.png']
 		var loadIndex = 0;
 		for(var i in imgList){
 			var img = new Image();
@@ -80,28 +83,80 @@
 				// alert(loadIndex/imgList.length);
 				$('#text').html(loadIndex/imgList.length * 100 + '%');
 				if(loadIndex/imgList.length >= 1){
-					// $('#text').html('loaded!');
 					$('#mask').fadeOut(200);
 				}
 			};
 		}
 
-		init();
-		animate();
+		var nbaList = ["images/bg_ys.jpg","images/bg_hj.jpg","images/bg_ld.jpg","images/bg_mc.jpg"];
+		var textureList = [];
+		for(var i in nbaList){
+			textureList.push(PIXI.Texture.fromImage(nbaList[i]));
+		}
 
-		function init(){
-			// 创建pixi的stage
-			stage = new PIXI.Container();
-			stage.displayList = new PIXI.DisplayList();
+		function getBackgroundTexture(num){
+			return textureList[num];		
+		}
 
-			var backgroundSprite = PIXI.Sprite.fromImage("images/bg_ys.png");
+
+		var basicText;
+		function showData(){
+			var style = {
+			    fontFamily : 'Arial',
+			    fontSize : '250px',
+			    fontWeight : 'bold',
+			    fill : '#fff'
+			};
+			if(!basicText){
+				basicText = new PIXI.Text('',style);
+				basicText.displayGroup = PIXI.layer;
+				basicText.zOrder = 10;
+				basicText.x = wwidth/2;
+				basicText.alpha = .7;
+				basicText.anchor.x = .5;
+				basicText.y = 10;
+				stage.addChild(basicText);
+			}
+			basicText.text = freeGoalMade + '/' + fieldGoalsAttempted;
+		}
+		function showTime(){
+			var timeText = new PIXI.Text('60s',{fontFamily:'Arial',fontSize:'50px',fill:'#fff'});
+			timeText.x = wwidth - 10;
+			timeText.displayGroup = PIXI.layer;
+			timeText.y = 10;
+			timeText.anchor.x = 1;
+			stage.addChild(timeText);
+			var i = 0;
+			timeText.handle = setInterval(function(){
+				i++;
+				timeText.text = 60 - i + 's';
+			},1000);
+
+		}
+
+
+		function setBackground(stage,num){
+			backgroundSprite && backgroundSprite.destroy();
+			var texture = getBackgroundTexture(num);
+			backgroundSprite = new PIXI.Sprite(texture);
+			backgroundSprite.displayGroup = PIXI.layer0;
 			backgroundSprite.anchor.x = .5;
 			backgroundSprite.anchor.y = .5;
 			backgroundSprite.position.x = wwidth/2;
 			backgroundSprite.position.y = wheight/2;
-			backgroundSprite.texture.baseTexture.on('loaded',function(images){
-				var imgWidht = images.width;
-				var imgHeight = images.height;
+			var imgWidht = texture.baseTexture.realWidth;
+			var imgHeight = texture.baseTexture.realHeight;
+			if(imgWidht / imgHeight > wwidth / wheight){
+				backgroundSprite.width = imgWidht * wheight / imgHeight;
+				backgroundSprite.height = wheight;
+			}else{
+				backgroundSprite.width = wwidth;
+				backgroundSprite.height = imgHeight * wwidth / imgWidht;
+			}
+			texture.baseTexture.on('loaded',function(image){
+				// console.log(image.realWidth)
+				var imgWidht = image.realWidth;
+				var imgHeight = image.realHeight;
 				if(imgWidht / imgHeight > wwidth / wheight){
 					backgroundSprite.width = imgWidht * wheight / imgHeight;
 					backgroundSprite.height = wheight;
@@ -111,11 +166,8 @@
 				}
 			});
 
-			// 创建一个渲染
-			renderer = PIXI.autoDetectRenderer(wwidth,wheight);
-			// 添加到页面
-			document.getElementById('canvas').appendChild(renderer.view);
-
+			showData();
+			
 			backgroundSprite.interactive = true;
 			// backgroundSprite.on('mousedown', onDown);
 			// backgroundSprite.on('touchstart', onDown);
@@ -123,18 +175,58 @@
 			backgroundSprite.on('touchend',ballStart);
 
 			stage.addChild(backgroundSprite);
+		}
 
-			var ground = Bodies.rectangle(wwidth/2, wheight, wwidth, 60, { isStatic: true });
+		init();
+		animate();
+
+		//重新创建篮板
+		function madeBank(){
+			var x = Math.random() * wwidth / 2 + wwidth / 2;
+			var y = Math.random() * wheight / 3 + wheight / 5;
+			bank && bank.destroy();
+			bank = new PIXI_BANK(x,y,engine,stage,FGC);
+		}
+		//命中
+		function FGC(){
+			freeGoalMade ++;
+			showData();
+			setTimeout(function(){
+				madeBank();
+			},500)
+		}
+		function noFGC(){
+			// setBackground(stage,Math.round(Math.random()*3));
+			// madeBank();
+		}
+
+		function init(){
+			// 创建pixi的stage
+			stage = new PIXI.Container();
+			stage.displayList = new PIXI.DisplayList();
+
+			setBackground(stage,Math.round(Math.random()*3));
+			// 创建一个渲染
+			renderer = PIXI.autoDetectRenderer(wwidth,wheight);
+			// 添加到页面
+			document.getElementById('canvas').appendChild(renderer.view);
+
+			
+
+
+			var ground = Bodies.rectangle(wwidth/2, wheight, wwidth*10, 60, { isStatic: true , label:'ground'});
 			var ground1 = Bodies.rectangle(wwidth, wheight/2, 60, wheight, { isStatic: true });
 			Matter.Body.setDensity(ground,1);
 			World.add(engine.world, [ground]);
 
 			Runner.start(runner,engine);
 
-			var bank = new PIXI_BANK(800,800,engine,stage);
-			setTimeout(function(){
-				// bank.destroy();
-			},10000);
+			
+			madeBank();
+
+
+			// bank = new PIXI_BANK(800,800,engine,stage,made);
+			
 			// bank = new PIXI_BANK(600,700,engine.world,stage);
 
 
@@ -149,12 +241,28 @@
 		}
 		function ballStart(eventData){
 
+			if(!isStart){
+				showTime();
+			}
+			isStart = true;
+
+			backgroundSprite.off('mouseup');
+			backgroundSprite.off('touchend');
+
+			fieldGoalsAttempted ++;
+			showData();
+
+			setTimeout(function(){
+				backgroundSprite.on('mouseup',ballStart);
+				backgroundSprite.on('touchend',ballStart);
+			},1000);
+
 
 			// Runner.stop(runner,engine);
 			var x = eventData.data.global.x;
 			var y = eventData.data.global.y;
 
-			var ball = new PIXI_BALL( 100 ,wheight - 200,engine,stage);
+			ball = new PIXI_BALL( 100 ,wheight - 200,engine,stage);
 			ball.setBallVelocity(x,wheight - y,wwidth,wheight);
 			
 
