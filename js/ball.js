@@ -19,7 +19,7 @@ var PIXI_BALL = function(x,y,engine,stage){
 	this.box.label = 'basketball';
 	this.box.restitution = 0.5;
 	Matter.Body.setDensity(this.box,0.0001);
-	this.maxSpeedX = 22.0;
+	this.maxSpeedX = 25.0;
 	this.minSpeedX = 2.0;
 	this.maxSpeedY = 60.0; //最大速度Y
 	this.minSpeedY = 13.0; //最小速度Y
