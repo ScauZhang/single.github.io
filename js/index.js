@@ -103,7 +103,7 @@ function Main(){
 			timeText.handle = setInterval(function(){
 				i++;
 				timeText.text = 60 - i + 's';
-				if(10 - i <= 0){
+				if(60 - i <= 0){
 					timeoutCallvback && timeoutCallvback();
 					isTimeout = true;
 				}
