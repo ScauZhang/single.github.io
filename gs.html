@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="content"></div>
+</body>
+</html>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.js"></script>
+<script>
+	// hq.sinajs.cn/list=sz002903
+	$(function(){
+		var baseUrl = 'http://hq.sinajs.cn/list=';
+		var data = ['sz300496','sz300520','sz002856','sz002230','sh600030','sh601818','sz002517'];
+		var $content = $('#content');
+		var createGetDataPromise = function(pamar){
+			return new Promise(function(resolve, reject){
+				var baseVar = 'hq_str_';
+				var url = baseUrl + pamar;
+				$.ajaxSetup ({ cache: true }); 
+		        $.getScript(url,function(){
+		        	resolve(eval(baseVar+pamar));
+		        });
+			});
+		};
+		var promiseList = [];
+		for(var i in data){
+			var one = data[i];
+			promiseList.push(createGetDataPromise(one));
+		}
+		Promise.all(promiseList).then(function(result){
+			for(var i in result){
+				var res = result[i];
+				var name = res.split(',')[0];
+				var open = res.split(',')[1];
+				var front_end = res.split(',')[2];
+				var now =  res.split(',')[3];
+				var high = res.split(',')[4];
+				var low =  res.split(',')[5];
+				$content.append('<p>'+name.substr(0, 1)+name.substr(2, 1)+' '+ parseFloat((now - front_end)/front_end) + ' ' + now +'</p>');	
+			}
+	    });
+
+	});
+</script>
