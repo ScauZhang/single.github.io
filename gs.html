@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 	<title>Document</title>
 </head>
+<style>
+	table{text-align: center;}
+	table tr td{line-height: 20px;padding: 3px 10px;border: 1px solid #ddd;}
+	.text_right{text-align: right;}
+</style>
 <body>
-	<div id="content"></div>
+	<div class="input">
+		<input type="text" id="text">
+		<input type="button" id="add" value="增加">
+	</div>
+	<div>
+		<table id="content"></table>
+	</div>
 </body>
 </html>
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -15,9 +25,45 @@
 	// hq.sinajs.cn/list=sz002903
 	$(function(){
 		var baseUrl = 'https://hq.sinajs.cn/list=';
-		var data = ['sz300496','sz300520','sz002856','sz002230','sh600030','sh601818','sz002517'];
+		var defaultData = ['sz300496','sz300520','sz002856','sz002230','sh600030','sh601818','sz002517'];
+		var data = [];
+
+		//是否为空，为空的话就默认数据
+		if(window.localStorage){     
+			var storageData = localStorage.getItem('gs');
+			if(!(storageData && storageData !== '')){
+				localStorage.setItem('gs',defaultData);
+			}
+			data = localStorage.getItem('gs').split(',');
+		}else{    
+			// alert("浏览暂不支持localStorage");
+			data = defaultData;
+		}
+		
+
 		var $content = $('#content');
-		var createGetDataPromise = function(pamar){
+
+		$('#add').click(function(){
+			var value = $('#text').val();
+			data.push(value);
+			if(window.localStorage){     
+				localStorage.setItem('gs',data);
+			}
+			displayData(data);
+		});
+
+		displayData(data);
+
+		window.dataDelete = function(index){
+			data.splice(index,1);
+			if(window.localStorage){     
+				localStorage.setItem('gs',data);
+			}
+			displayData(data);
+		}
+
+		//将ajax装合为promise
+		function createGetDataPromise(pamar){
 			return new Promise(function(resolve, reject){
 				var baseVar = 'hq_str_';
 				var url = baseUrl + pamar;
@@ -27,23 +73,39 @@
 		        });
 			});
 		};
-		var promiseList = [];
-		for(var i in data){
-			var one = data[i];
-			promiseList.push(createGetDataPromise(one));
-		}
-		Promise.all(promiseList).then(function(result){
-			for(var i in result){
-				var res = result[i];
-				var name = res.split(',')[0];
-				var open = res.split(',')[1];
-				var front_end = res.split(',')[2];
-				var now =  res.split(',')[3];
-				var high = res.split(',')[4];
-				var low =  res.split(',')[5];
-				$content.append('<p>'+name.substr(0, 1)+name.substr(2, 1)+' '+ parseFloat((now - front_end)/front_end) + ' ' + now +'</p>');	
-			}
-	    });
+		//获取数据显示数据
+		function displayData(data){
 
+			var promiseList = [];
+			for(var i in data){
+				var one = data[i];
+				promiseList.push(createGetDataPromise(one));
+			}
+			Promise.all(promiseList).then(function(result){
+				var htmlArr = [];
+				for(var i in result){
+					var res = result[i].split(',');
+					var name = res[0];
+					var open = res[1];
+					var front_end = res[2];
+					var now =  res[3];
+					var high = res[4];
+					var low =  res[5];
+					htmlArr.push('<tr>');
+					htmlArr.push('<td>');
+					htmlArr.push(name.substr(0, 1)+name.substr(2, 1));
+					htmlArr.push('</td>');
+					htmlArr.push('<td class="text_right">');
+					htmlArr.push(parseFloat((now - front_end)/front_end));
+					htmlArr.push('</td>');
+					htmlArr.push('<td>');
+					htmlArr.push(now);
+					htmlArr.push('</td>');
+					htmlArr.push('<td onclick="dataDelete('+i+')">删除</td>');
+					htmlArr.push('</tr>');
+				}
+				$content.html(htmlArr.join(''));	
+		    });
+		}
 	});
 </script>
