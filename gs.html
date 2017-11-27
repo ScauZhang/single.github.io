@@ -6,17 +6,22 @@
 	<title>Document</title>
 </head>
 <style>
+	*{margin: 0;padding: 0;}
 	html,body{width: 100%;}
-	table{text-align: center;width: 100%;}
-	table tr td{line-height: 20px;padding: 3px 10px;border: 1px solid #ddd;}
+	#text{margin-top: 100px;line-height: 40px;}
+	#add{line-height: 40px;height: 40px;width: 60px;text-align: center;}
+	table{text-align: center;width: 100%;border-collapse: collapse;}
+	.main{width: 98%;margin: 10px auto;}
+	table tr td{line-height: 20px;padding: 3px 10px;border: 1px solid #ddd;margin-top: 10px;}
 	.text_right{text-align: right;}
+	.input{text-align: right;}
 </style>
 <body>
-	<div class="input">
-		<input type="text" id="text">
-		<input type="button" id="add" value="增加">
-	</div>
-	<div>
+	<div class="main">
+		<div class="input">
+			<input type="text" id="text">
+			<input type="button" id="add" value="增加">
+		</div>
 		<table id="content"></table>
 	</div>
 </body>
@@ -98,7 +103,7 @@
 					htmlArr.push(name.substr(0, 1)+name.substr(2, 1));
 					htmlArr.push('</td>');
 					htmlArr.push('<td class="text_right">');
-					htmlArr.push(parseFloat((now - front_end)/front_end));
+					htmlArr.push(parseFloat((now - front_end)/front_end).toFixed(4));
 					htmlArr.push('</td>');
 					htmlArr.push('<td>');
 					htmlArr.push(now);
