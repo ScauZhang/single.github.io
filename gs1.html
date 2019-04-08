@@ -1204,7 +1204,7 @@ return Promise$2;
 		var data = [];
 
 		//是否为空，为空的话就默认数据
-		if(window.localStorage){     
+		if(window.localStorage && localStorage.getItem('gs')!=''){     
 			var storageData = localStorage.getItem('gs');
 			if(!(storageData && storageData !== '')){
 				localStorage.setItem('gs',defaultData);
